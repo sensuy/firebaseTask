@@ -1,24 +1,44 @@
-<ion-content padding>
-<h1 text-center>
-  <ion-icon name="done-all" color="primary" class="icon-7em"></ion-icon>
-</h1>
+<ion-content class="ion-padding">
+  <h1 class="ion-text-center">
+    <ion-icon name="done-all" color="primary" class="icon-7em"></ion-icon>
+  </h1>
+  <form [formGroup]="authForm" (submit)="onSubmit()">
 
-<ion-item>
-  <ion-icon slot="start" name="mail" color="primary"></ion-icon>
-  <ion-input type="email" placeholder="Email" inputmode="email" autofocus="true"></ion-input>
-</ion-item>
+    <ng-container *ngIf="!configs.isSignIn">
+      <ion-item>
+        <ion-icon slot="start" name="person" color="primary"></ion-icon>
+        <ion-input type="text" placeholder="Name" formControlName="name"></ion-input>
+        <ion-note color="danger" slot="end" *ngIf="name.dirty && name.hasError('required')">Required</ion-note>
+        <ion-note color="danger" slot="end" *ngIf="name.dirty && name.hasError('minlength')">Min 3 characters
+        </ion-note>
+      </ion-item>
 
-<ion-item>
-  <ion-icon slot="start" name="lock" color="primary"></ion-icon>
-  <ion-input type="password" placeholder="Password"></ion-input>
-</ion-item>
+    </ng-container>
 
-<ion-button expand="block">Login</ion-button>
-<ion-button expand="block" fill="clear">Create account</ion-button>
-<ion-button expand="block">
-  <ion-icon slot="start" name="logo-facebook"></ion-icon>
-  Login with Facebook
-</ion-button>
+    <ion-item>
+      <ion-icon slot="start" name="mail" color="primary"></ion-icon>
+      <ion-input type="email" placeholder="Email" formControlName="email" inputmode="email" autofocus="true">
+      </ion-input>
+      <ion-note color="danger" slot="end" *ngIf="email.dirty && email.hasError('required')">Required</ion-note>
+      <ion-note color="danger" slot="end" *ngIf="email.dirty && email.hasError('email')">Inváid email</ion-note>
+    </ion-item>
+
+    <ion-item>
+      <ion-icon slot="start" name="lock" color="primary"></ion-icon>
+      <ion-input type="password" placeholder="Password" formControlName="password"></ion-input>
+      <ion-note color="danger" slot="end" *ngIf="password.dirty && password.hasError('required')">Required</ion-note>
+      <ion-note color="danger" slot="end" *ngIf="password.dirty && password.hasError('minlength')">Min 6 characters
+      </ion-note>
+    </ion-item>
+
+    <ion-button expand="block" type="submit" [disabled]="authForm.invalid"> {{ configs.action }} </ion-button>
+  </form>
+
+  <ion-button expand="block" fill="clear" (click)="changeAuthAction()"> {{ configs.actionChange }} </ion-button>
+  <ion-button expand="block">
+    <ion-icon slot="start" name="logo-facebook"></ion-icon>
+    Login with Facebook
+  </ion-button>
 
 
 </ion-content>

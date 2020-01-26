@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormGroup, FormBuilder, Validators, FormControlDirective, FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-login',
@@ -7,9 +8,51 @@ import { Component, OnInit } from '@angular/core';
 })
 export class LoginPage implements OnInit {
 
-  constructor() { }
+  authForm: FormGroup;
+
+  configs = {
+    isSignIn: true,
+    action: 'Login',
+    actionChange: 'Create account'
+  };
+
+  private nameControl = new FormControl('', [Validators.required, Validators.minLength(3)]);
+
+  constructor(private formBuilder: FormBuilder) { }
 
   ngOnInit() {
+    this.createForm();
+  }
+
+  private createForm(): void {
+    this.authForm = this.formBuilder.group({
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(6)]]
+    });
+  }
+  get name(): FormControl {
+    return this.authForm.get('name') as FormControl;
+  }
+
+  get email(): FormControl {
+    return this.authForm.get('email') as FormControl;
+  }
+
+  get password(): FormControl {
+    return this.authForm.get('password') as FormControl;
+  }
+
+  changeAuthAction(): void {
+    this.configs.isSignIn = !this.configs.isSignIn;
+    const { isSignIn } = this.configs;
+    this.configs.action = isSignIn ? 'Login' : 'Sign Up';
+    this.configs.actionChange = isSignIn ? 'Create account' : 'Already have an account';
+    !isSignIn
+      ? this.authForm.addControl('name', this.nameControl)
+      : this.authForm.removeControl('name');
+  }
+  onSubmit() {
+    console.log('AuthForm: ', this.authForm.value);
   }
 
 }
