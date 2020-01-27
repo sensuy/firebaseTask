@@ -24,4 +24,20 @@ export class AuthService {
           .then(() => credentials)
       );
   }
+
+  private signInWithPopup(provider: string): Promise<auth.UserCredential> {
+    let signInProvider = null;
+    switch (provider) {
+      case 'facebook':
+        signInProvider = new auth.FacebookAuthProvider();
+        break;
+      case 'google':
+        signInProvider = new auth.GoogleAuthProvider();
+        break;
+    }
+
+    return this.afAuth.auth.signInWithPopup(signInProvider);
+
+  }
+
 }
