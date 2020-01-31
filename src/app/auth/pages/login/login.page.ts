@@ -1,5 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormControlDirective, FormControl } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
+
+import { AuthProvider } from './../../../core/services/auth.types';
+import { AuthService } from 'src/app/core/services/auth.service';
+import { OverlayService } from 'src/app/core/services/overlay.service';
 
 @Component({
   selector: 'app-login',
@@ -9,7 +13,7 @@ import { FormGroup, FormBuilder, Validators, FormControlDirective, FormControl }
 export class LoginPage implements OnInit {
 
   authForm: FormGroup;
-
+  authProviders = AuthProvider;
   configs = {
     isSignIn: true,
     action: 'Login',
@@ -18,7 +22,11 @@ export class LoginPage implements OnInit {
 
   private nameControl = new FormControl('', [Validators.required, Validators.minLength(3)]);
 
-  constructor(private formBuilder: FormBuilder) { }
+  constructor(
+    private formBuilder: FormBuilder,
+    private authService: AuthService,
+    private overlayService: OverlayService
+  ) { }
 
   ngOnInit() {
     this.createForm();
@@ -51,8 +59,25 @@ export class LoginPage implements OnInit {
       ? this.authForm.addControl('name', this.nameControl)
       : this.authForm.removeControl('name');
   }
-  onSubmit() {
-    console.log('AuthForm: ', this.authForm.value);
+  async onSubmit(provider: AuthProvider): Promise<void> {
+    const loading = await this.overlayService.loading({message: 'Buscando dados...'});
+    try {
+      const credentials = await this.authService.authenticate({
+        isSignIn: this.configs.isSignIn,
+        user: this.authForm.value,
+        provider
+      });
+      console.log('Authenticated: ', credentials);
+      console.log('Redirecting...');
+    } catch (error) {
+      console.error('Auth error: ', error);
+      await this.overlayService.toast({
+        message: error.message
+      });
+    } finally {
+      loading.dismiss();
+    }
+
   }
 
 }
