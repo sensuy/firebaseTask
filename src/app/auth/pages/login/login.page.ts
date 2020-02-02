@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
+import { NavController } from '@ionic/angular';
 
-import { AuthProvider } from './../../../core/services/auth.types';
 import { AuthService } from 'src/app/core/services/auth.service';
+import { AuthProvider } from 'src/app/core/services/auth.types';
 import { OverlayService } from 'src/app/core/services/overlay.service';
 
 @Component({
@@ -23,8 +25,10 @@ export class LoginPage implements OnInit {
   private nameControl = new FormControl('', [Validators.required, Validators.minLength(3)]);
 
   constructor(
-    private formBuilder: FormBuilder,
     private authService: AuthService,
+    private formBuilder: FormBuilder,
+    private navCtrl: NavController,
+    private route: ActivatedRoute,
     private overlayService: OverlayService
   ) { }
 
@@ -69,6 +73,7 @@ export class LoginPage implements OnInit {
       });
       console.log('Authenticated: ', credentials);
       console.log('Redirecting...');
+      this.navCtrl.navigateForward(this.route.snapshot.queryParamMap.get('redirect') || ('/tasks'));
     } catch (error) {
       console.error('Auth error: ', error);
       await this.overlayService.toast({
