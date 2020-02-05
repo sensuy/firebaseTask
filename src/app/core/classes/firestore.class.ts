@@ -1,4 +1,4 @@
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { AngularFirestore, AngularFirestoreCollection, QueryFn, AngularFirestoreDocument } from '@angular/fire/firestore';
 
 export abstract class Firestore<T extends { id: string } > {
@@ -19,7 +19,7 @@ export abstract class Firestore<T extends { id: string } > {
 	}
 
 	getAll(): Observable<T[]> {
-		return this.collection.valueChanges();
+			return this.collection.valueChanges();
 	}
 
 	get(id: string): Observable<T> {
