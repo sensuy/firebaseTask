@@ -1,6 +1,9 @@
 <ion-header>
   <ion-toolbar color="primary">
+    <app-menu-toggle slot="start" menu="main-menu">
+    </app-menu-toggle>
     <ion-title>Tasks List</ion-title>
+    <app-logout-button slot="end" menu="main-menu"></app-logout-button>
   </ion-toolbar>
 </ion-header>
 
@@ -8,7 +11,11 @@
 
   <ion-list *ngIf="(tasks$ | async) as tasks">
     <ng-container *ngIf="tasks.length > 0; else noTasks">
-      <app-task-item *ngFor="let task of tasks" [task]="task">
+      <app-task-item *ngFor="let task of tasks"
+      [task]="task"
+      (update)="onUpdate($event)"
+      (delete)="onDelete($event)"
+      (done)="onDone($event)">
       </app-task-item>>
     </ng-container>
     <ng-template #noTasks>
